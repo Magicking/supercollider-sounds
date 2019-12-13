@@ -1,0 +1,73 @@
+From ff4b195f9ce91a01388f56a567612f3c949ba28e Mon Sep 17 00:00:00 2001
+From: Magicking <syllaur@gmail.com>
+Date: Sun, 28 Aug 2016 23:20:38 +0200
+Subject: [PATCH] Add zoom to non-ide Help Browser
+
+---
+ HelpSource/Classes/HelpBrowser.schelp          |  9 +++++++++
+ SCClassLibrary/Common/GUI/Base/QWebView.sc     | 14 ++++++++++++++
+ SCClassLibrary/Common/GUI/tools/HelpBrowser.sc |  6 ++++++
+ 3 files changed, 29 insertions(+)
+
+diff --git a/HelpSource/Classes/HelpBrowser.schelp b/HelpSource/Classes/HelpBrowser.schelp
+index 768a815..26ac7d1 100644
+--- a/HelpSource/Classes/HelpBrowser.schelp
++++ b/HelpSource/Classes/HelpBrowser.schelp
+@@ -68,3 +68,12 @@ Go back.
+ method:: goForward
+ Go forward.
+ 
++method:: zoomIn
++Zoom In.
++
++method:: zoomOut
++Zoom Out.
++
++method:: resetZoom
++Reset zoom.
++
+diff --git a/SCClassLibrary/Common/GUI/Base/QWebView.sc b/SCClassLibrary/Common/GUI/Base/QWebView.sc
+index a0172c3..ad46d8f 100644
+--- a/SCClassLibrary/Common/GUI/Base/QWebView.sc
++++ b/SCClassLibrary/Common/GUI/Base/QWebView.sc
+@@ -34,6 +34,20 @@ WebView : View {
+ 
+ 	forward { this.invokeMethod( 'forward' ); }
+ 
++	zoomIn { var zoomFactor;
++		zoomFactor = this.invokeMethod( 'zoomFactor' );
++		zoomFactor = min( zoomFactor - 0.1, 2.0 );
++		this.invokeMethod( 'setZoomFactor' , zoomFactor );
++	}
++
++	zoomOut { var zoomFactor;
++		zoomFactor = this.invokeMethod( 'zoomFactor' );
++		zoomFactor = max( zoomFactor - 0.1, 0.1 );
++		this.invokeMethod( 'setZoomFactor' , zoomFactor );
++	}
++
++	resetZoom { this.invokeMethod( 'setZoomFactor', 1.0 ); }
++
+ 	findText { arg string, reverse = false;
+ 		this.invokeMethod( \findText, [string, reverse] );
+ 	}
+diff --git a/SCClassLibrary/Common/GUI/tools/HelpBrowser.sc b/SCClassLibrary/Common/GUI/tools/HelpBrowser.sc
+index 4f05ba2..d5cad6f 100644
+--- a/SCClassLibrary/Common/GUI/tools/HelpBrowser.sc
++++ b/SCClassLibrary/Common/GUI/tools/HelpBrowser.sc
+@@ -116,6 +116,12 @@ HelpBrowser {
+ 
+ 	goForward { webView.forward; }
+ 
++	zoomIn { webView.zoomIn; }
++
++	zoomOut { webView.zoomOut; }
++
++	resetZoom { webView.resetZoom; }
++
+ /* ------------------------------ private ------------------------------ */
+ 
+ 	init { arg aHomeUrl, aNewWin;
+-- 
+2.9.3
+
